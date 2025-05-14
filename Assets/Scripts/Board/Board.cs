@@ -24,6 +24,7 @@ public class Board
     private Transform m_root;
 
     private int m_matchMin;
+    static readonly NormalItem.eNormalType[] allTypes = (NormalItem.eNormalType[])Enum.GetValues(typeof(NormalItem.eNormalType));
 
     public Board(Transform transform, GameSettings gameSettings)
     {
@@ -151,6 +152,24 @@ public class Board
 
     internal void FillGapsWithNewItems()
     {
+
+        Dictionary<NormalItem.eNormalType, int> itemCounts = new Dictionary<NormalItem.eNormalType, int>();
+        foreach (var cell in m_cells)
+        {
+            if (cell.IsEmpty) continue;
+            if (cell.Item is NormalItem normalItem)
+            {
+                if (itemCounts.TryGetValue(normalItem.ItemType, out int count))
+                    itemCounts[normalItem.ItemType] = count + 1;
+                else
+                    itemCounts[normalItem.ItemType] = 1;
+            }
+        }
+
+       
+        HashSet<NormalItem.eNormalType> surroundingTypes = new HashSet<NormalItem.eNormalType>();
+        List<NormalItem.eNormalType> candidates = new List<NormalItem.eNormalType>();
+
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -158,14 +177,58 @@ public class Board
                 Cell cell = m_cells[x, y];
                 if (!cell.IsEmpty) continue;
 
-                NormalItem item = new NormalItem();
 
-                item.SetType(Utils.GetRandomNormalType());
+                surroundingTypes.Clear();
+
+                AddIfValidType(x - 1, y);
+                AddIfValidType(x + 1, y);
+                AddIfValidType(x, y - 1);
+                AddIfValidType(x, y + 1);
+
+
+                candidates.Clear();
+                for (int i = 0; i < allTypes.Length; i++)
+                {
+                    if (!surroundingTypes.Contains(allTypes[i]))
+                        candidates.Add(allTypes[i]);
+                }
+
+                NormalItem.eNormalType selectedType = candidates[0];
+                int minCount = int.MaxValue;
+                for (int i = 0; i < candidates.Count; i++)
+                {
+                    NormalItem.eNormalType type = candidates[i];
+                    int count = itemCounts.TryGetValue(type, out int val) ? val : 0;
+
+                    if (count < minCount)
+                    {
+                        minCount = count;
+                        selectedType = type;
+                    }
+                }
+
+                if (itemCounts.ContainsKey(selectedType))
+                    itemCounts[selectedType]++;
+                else
+                    itemCounts[selectedType] = 1;
+
+                NormalItem item = new NormalItem();
+                item.SetType(selectedType);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(true);
+            }
+        }
+
+        void AddIfValidType(int nx, int ny)
+        {
+            if (nx >= 0 && nx < boardSizeX && ny >= 0 && ny < boardSizeY)
+            {
+                var neighbor = m_cells[nx, ny];
+                if (neighbor.Item is NormalItem ni)
+                    surroundingTypes.Add(ni.ItemType);
             }
         }
     }
