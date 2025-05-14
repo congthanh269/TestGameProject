@@ -100,6 +100,10 @@ public class BoardController : MonoBehaviour
             ResetRayCast();
         }
 
+    
+    }
+    private void FixedUpdate()
+    {
         if (Input.GetMouseButton(0) && m_isDragging)
         {
             var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);

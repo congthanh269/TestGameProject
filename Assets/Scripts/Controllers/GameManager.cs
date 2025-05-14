@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
     public event Action<eStateGame> StateChangedAction = delegate { };
 
     public enum eLevelMode
@@ -44,9 +45,12 @@ public class GameManager : MonoBehaviour
     private UIMainManager m_uiMenu;
 
     private LevelCondition m_levelCondition;
+    [SerializeField]
+    public GameObject backCell;
 
     private void Awake()
     {
+        Instance = this;
         State = eStateGame.SETUP;
 
         m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
