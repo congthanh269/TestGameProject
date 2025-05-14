@@ -25,28 +25,29 @@ public class NormalItem : Item
     protected override string GetPrefabName()
     {
         string prefabname = string.Empty;
+        List<string> listName = GameManager.Instance.skinData.listNameAtlas;
         switch (ItemType)
         {
             case eNormalType.TYPE_ONE:
-                prefabname = Constants.PREFAB_NORMAL_TYPE_ONE;
+                prefabname = listName[0];
                 break;
             case eNormalType.TYPE_TWO:
-                prefabname = Constants.PREFAB_NORMAL_TYPE_TWO;
+                prefabname = listName[1];
                 break;
             case eNormalType.TYPE_THREE:
-                prefabname = Constants.PREFAB_NORMAL_TYPE_THREE;
+                prefabname = listName[2];
                 break;
             case eNormalType.TYPE_FOUR:
-                prefabname = Constants.PREFAB_NORMAL_TYPE_FOUR;
+                prefabname = listName[3];
                 break;
             case eNormalType.TYPE_FIVE:
-                prefabname = Constants.PREFAB_NORMAL_TYPE_FIVE;
+                prefabname = listName[4];
                 break;
             case eNormalType.TYPE_SIX:
-                prefabname = Constants.PREFAB_NORMAL_TYPE_SIX;
+                prefabname = listName[5];
                 break;
             case eNormalType.TYPE_SEVEN:
-                prefabname = Constants.PREFAB_NORMAL_TYPE_SEVEN;
+                prefabname = listName[6];
                 break;
         }
 

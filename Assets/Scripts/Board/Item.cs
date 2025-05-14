@@ -18,10 +18,12 @@ public class Item
 
         if (!string.IsNullOrEmpty(prefabname))
         {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
+            GameObject prefab = GameManager.Instance.prefabItem;
+            SkinData skinData = GameManager.Instance.skinData;
             if (prefab)
             {
                 View = GameObject.Instantiate(prefab).transform;
+                View.GetComponent<SpriteRenderer>().sprite = skinData.spriteAtlas.GetSprite(prefabname);
             }
         }
     }

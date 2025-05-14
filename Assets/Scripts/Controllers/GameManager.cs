@@ -45,8 +45,10 @@ public class GameManager : MonoBehaviour
     private UIMainManager m_uiMenu;
 
     private LevelCondition m_levelCondition;
-    [SerializeField]
+
     public GameObject backCell;
+    public GameObject prefabItem;
+    public SkinData skinData;
 
     private void Awake()
     {

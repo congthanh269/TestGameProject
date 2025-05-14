@@ -23,18 +23,19 @@ public class BonusItem : Item
     protected override string GetPrefabName()
     {
         string prefabname = string.Empty;
+        List<string> listName = GameManager.Instance.skinData.listNameAtlas;
         switch (ItemType)
         {
             case eBonusType.NONE:
                 break;
             case eBonusType.HORIZONTAL:
-                prefabname = Constants.PREFAB_BONUS_HORIZONTAL;
+                prefabname = listName[7];
                 break;
             case eBonusType.VERTICAL:
-                prefabname = Constants.PREFAB_BONUS_VERTICAL;
+                prefabname = listName[8];
                 break;
             case eBonusType.ALL:
-                prefabname = Constants.PREFAB_BONUS_BOMB;
+                prefabname = listName[9];
                 break;
         }
 
