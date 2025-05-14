@@ -72,9 +72,16 @@ public class Board
 
     }
 
-    internal void Fill()
+    internal void Fill(bool useSaved = false)
     {
+        if (!useSaved)
+        {
+            GameManager.Instance.savedItemTypes = new NormalItem.eNormalType[boardSizeX, boardSizeY];
+            GameManager.Instance.hasSavedTypes = true;
+        }
+
         List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -82,26 +89,31 @@ public class Board
                 Cell cell = m_cells[x, y];
                 NormalItem item = new NormalItem();
 
-                types.Clear();
-                if (cell.NeighbourBottom != null)
+                NormalItem.eNormalType type;
+
+                if (useSaved && GameManager.Instance.hasSavedTypes)
                 {
-                    NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
-                    if (nitem != null)
+                    type = GameManager.Instance.savedItemTypes[x, y];
+                }
+                else
+                {
+                    types.Clear();
+                    if (cell.NeighbourBottom != null)
                     {
-                        types.Add(nitem.ItemType);
+                        NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
+                        if (nitem != null) types.Add(nitem.ItemType);
                     }
+                    if (cell.NeighbourLeft != null)
+                    {
+                        NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
+                        if (nitem != null) types.Add(nitem.ItemType);
+                    }
+
+                    type = Utils.GetRandomNormalTypeExcept(types.ToArray());
+                    GameManager.Instance.savedItemTypes[x, y] = type;
                 }
 
-                if (cell.NeighbourLeft != null)
-                {
-                    NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
-                    if (nitem != null)
-                    {
-                        types.Add(nitem.ItemType);
-                    }
-                }
-
-                item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
+                item.SetType(type);
                 item.SetView();
                 item.SetViewRoot(m_root);
 

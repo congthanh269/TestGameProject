@@ -45,6 +45,9 @@ public class GameManager : MonoBehaviour
     private UIMainManager m_uiMenu;
 
     private LevelCondition m_levelCondition;
+    public eLevelMode currentMode;
+    public NormalItem.eNormalType[,] savedItemTypes;
+    public bool hasSavedTypes = false;
 
     public GameObject backCell;
     public GameObject prefabItem;
@@ -98,6 +101,39 @@ public class GameManager : MonoBehaviour
             m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
         }
         else if (mode == eLevelMode.TIMER)
+        {
+            m_levelCondition = this.gameObject.AddComponent<LevelTime>();
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
+        }
+
+        m_levelCondition.ConditionCompleteEvent += GameOver;
+
+        State = eStateGame.GAME_STARTED;
+    }
+
+    public void ResetLevel()
+    {
+        if(m_boardController != null)
+        {
+            Destroy(m_boardController.gameObject);
+        }
+        if (m_levelCondition != null)
+        {
+            m_levelCondition.ConditionCompleteEvent -= GameOver;
+
+            Destroy(m_levelCondition);
+            m_levelCondition = null;
+        }
+
+        m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
+        m_boardController.ResetGame(this, m_gameSettings);
+
+        if (currentMode == eLevelMode.MOVES)
+        {
+            m_levelCondition = this.gameObject.AddComponent<LevelMoves>();
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
+        }
+        else if (currentMode == eLevelMode.TIMER)
         {
             m_levelCondition = this.gameObject.AddComponent<LevelTime>();
             m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);

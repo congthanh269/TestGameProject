@@ -45,10 +45,30 @@ public class BoardController : MonoBehaviour
 
         Fill();
     }
+    public void ResetGame(GameManager gameManager, GameSettings gameSettings)
+    {
+        m_gameManager = gameManager;
+
+        m_gameSettings = gameSettings;
+
+        m_gameManager.StateChangedAction += OnGameStateChange;
+
+        m_cam = Camera.main;
+
+        m_board = new Board(this.transform, gameSettings);
+
+        ResetFill();
+    }
+
 
     private void Fill()
     {
         m_board.Fill();
+        FindMatchesAndCollapse();
+    }
+    private void ResetFill()
+    {
+        m_board.Fill(true);
         FindMatchesAndCollapse();
     }
 
