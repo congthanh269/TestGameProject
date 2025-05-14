@@ -147,6 +147,16 @@ public class Board
                 list.RemoveAt(rnd);
             }
         }
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                if (m_cells[x, y].Item is NormalItem ni)
+                {
+                    GameManager.Instance.savedItemTypes[x, y] = ni.ItemType;
+                }
+            }
+        }
     }
 
 
